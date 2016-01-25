@@ -1,0 +1,127 @@
+<div class="navbar">
+  <div class="navbar-inner">
+    <div class="left sliding">
+        
+        
+        
+        <!--<a href="#" class="back link"> <i class="icon icon-back"></i><span>Back</span></a>--></div>
+    <div class="center sliding"><img src="assets/menu-logo@1x.png"/></div>
+    <div class="right"><a href="#" class="link icon-only open-panel"><img src="assets/SlideMenu@2x.png" style="width: 52px;height:100%;"></a></div>
+  </div>
+</div>
+
+
+<div class="pages">
+    
+    
+    
+  <div data-page="trails" class="page">
+       <!-- Search bar -->
+  <form data-search-list=".list-block-search" data-search-in=".item-title" class="searchbar searchbar-init">    
+      <div class="searchbar-input">
+      <input type="search" placeholder="Search. e.g. city, difficulty"><a href="#" class="searchbar-clear"></a>
+          
+    </div><a href="#" class="searchbar-cancel">Cancel</a>
+      
+      
+  </form>
+     
+  <!-- Search bar overlay -->
+  <div class="searchbar-overlay"></div>
+ 
+  <div class="page-content">
+      
+
+
+    <!-- This block will be displayed if nothing found -->
+    <div class="content-block searchbar-not-found">
+      <div class="content-block-inner">Nothing found</div>
+    </div>
+ 
+    <!-- This block will be displayed if anything found, and this list block is used a searbar target -->
+      
+      
+    <div class="page-content" style='margin-top: -4vh;' data-page="trails">
+      <div class="list-block list-block-search searchbar-found">
+      <ul class='list-block-search' style="top:-15px; botoom: -15px">
+           <div class="list-block">
+               
+                     <div class="item-content filter-open">
+   
+        <div class="item-inner">
+          <div class="item-title label ">Filter</div>
+         <div class="item-input">
+          
+             <i class="fa fa-chevron-down" style="float: right;"></i>
+
+          </div>
+        </div>
+      </div>
+     
+    <div class="filter hidden">
+      <div class="item-content">
+   
+        <div class="item-inner">
+          <div class="item-title label">Dog Friendly</div>
+          <div class="item-input">
+            <label class="label-switch" style="float: right;">
+              <input type="checkbox" id="dogF">
+              <div class="checkbox"></div>
+            </label>
+          </div>
+        </div>
+      </div>
+       <div class="item-content">
+              
+           <div class="item-inner">
+                               <div class="item-title label">Difficulty</div>
+
+                 <div class="item-input">
+                   
+              <label class="label" style="float: right;    text-align: right;">         
+                     <input type="text" placeholder="Tap here to start search" readonly id="picker-custom-toolbar" style="float: right;    text-align: right;">
+                       </label>    
+                 </div>
+      
+                   
+               </div>
+                 
+             </div>
+  
+      </div>
+                  </div>{{#each this}}
+                    <li class="card ks-card-header-pic {{dogFriendly}} {{difficulty}}">
+
+            <a href="./partials/singleTrail.html"  data-context-name="trails.{{@index}}" onclick= "getimagesJSON(this.id)" id="{{id}}">
+                <div style="background-color: lightblue;background-image:url({{bgImage}}); background-size: 100% 100%; background-repeat: no-repeat; " valign="bottom" class="card-header color-white no-border" ><div class="trail-meta item-title">
+                       {{#if dogFriendly}}
+                    <span class="paw"><i class="fa fa-paw fa-1x"></i></span>
+
+{{/if}}     
+     {{#if bears}}
+                    <span class="bears"><i class="fa fa-exclamation"></i></i></span>
+
+{{/if}}
+ <span class="trail-difficulty ">{{difficulty}}</span><br/>{{name}}<br /><span  class="trail-tag">Location : <strong>{{city}}</strong></span>
+
+ </div></div>
+        
+            </a>
+          </li>{{/each}}
+        </ul>
+      </div>
+    </div>
+      
+      
+  </div>
+</div>
+    
+    <script>
+        //search bar function
+        var mySearchbar = app.searchbar('.searchbar', {
+            searchList: '.list-block-search',
+            searchIn: '.item-title'
+        });
+    
+   
+    </script>

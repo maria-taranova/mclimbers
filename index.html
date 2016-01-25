@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <style>
+    </style>
+    <meta charset="utf-8">
+    <meta http-equiv="Cache-control" content="public">
+    <meta content=
+    "width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui"
+    name="viewport">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="black" name="apple-mobile-web-app-status-bar-style">
+    <title>Mountain Climbers</title><!-- Path to Framework7 Library CSS-->
+    <link rel="apple-touch-icon" sizes="57x57" href="assets/apple-icon-57x57.png" />
+<link rel="apple-touch-icon" sizes="72x72" href="assets/apple-icon-72x72.png" />
+<link rel="apple-touch-icon" sizes="114x114" href="assets/apple-icon-114x114.png" />
+<link rel="apple-touch-icon" sizes="144x144" href="assets/apple-icon-144x144.png" />
+
+    
+    <script type="text/javascript">
+         
+            var stylesheet = document.createElement('link');
+          stylesheet.href = 'css/framework7.ios.min.css';
+          stylesheet.rel = 'stylesheet';
+          stylesheet.type = 'text/css';
+          document.getElementsByTagName('head')[0].appendChild(stylesheet);
+        
+           var stylesheet1 = document.createElement('link');
+          stylesheet1.href = 'css/my-app.css';
+          stylesheet1.rel = 'stylesheet';
+          stylesheet1.type = 'text/css';
+          document.getElementsByTagName('head')[0].appendChild(stylesheet1);
+        
+          var stylesheet2 = document.createElement('link');
+          stylesheet2.href = 'https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css';
+          stylesheet2.rel = 'stylesheet';
+          stylesheet2.type = 'text/css';
+          document.getElementsByTagName('head')[0].appendChild(stylesheet2);
+        
+           var stylesheet3 = document.createElement('link');
+          stylesheet3.href = 'https://fonts.googleapis.com/css?family=Montserrat';
+          stylesheet3.rel = 'stylesheet';
+          stylesheet3.type = 'text/css';
+          document.getElementsByTagName('head')[0].appendChild(stylesheet3);
+        
+        
+        
+        
+    </script>
+
+</head>
+<body>
+    <!--Splash-->
+    <div class="login-screen modal-in" style=
+    "background-color: lightblue; background-image:url('assets/bg-login.jpg'); position: absolute; width: 100%;height: 100%;background-size: cover; -webkit-background-size: cover;-moz-background-size: cover;text-align:center;">
+    <div class="page-content">
+            <div class="content-block welcome-block">
+                <h2>Welcome to Mountain Climbers</h2>
+                <p><br>
+                <a class="open-login-screen" href="#" id="welcome-button">Let's
+                Start Hiking</a></p><br>
+            </div>
+        </div>
+    </div><!--Splash finished--><!--Login Pop Up Start-->
+    <div class="login-screen">
+        <div class="view">
+            <div class="page">
+                <div class="page-content login-screen-content" style=
+                "background-color: lightblue; background-image:url('assets/bg-login.jpg');position: absolute;width: 100%;height: 100%;background-size: cover; -webkit-background-size: cover;-moz-background-size: cover;text-align:center;">
+                <div class="login-screen-title" style="margin-top:60px;">
+                <img class="" src="assets/Logo-color-large.svg" style=
+                "height:auto;width:150px;"></div>
+                    <form id="user-signin" autocomplete="off" name=
+                    "user-signin">
+                        <div class="list-block">
+                            <ul>
+                                <li class="item-content" style=
+                                "background-color: #FFFFFF; border-radius: 40px;border-radius: 40px; opacity: 0.5; margin-right:10px; margin-left:10px;">
+                                <div class="item-inner">
+                                        <div class="item-title label">
+                                            Username
+                                        </div>
+                                        <div class="item-input">
+                                            <input name="username" placeholder=
+                                            "Your username" type="text">
+                                        </div>
+                                    </div>
+                                </li>
+                                <li style="list-style: none"><br></li>
+                                <li class="item-content" style=
+                                "background-color: #FFFFFF; border-radius: 40px;border-radius: 40px; opacity: 0.5; margin-right:10px; margin-left:10px;">
+                                <div class="item-inner">
+                                        <div class="item-title label">
+                                            Password
+                                        </div>
+                                        <div class="item-input">
+                                            <input name="password" placeholder=
+                                            "Your password" type="password">
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="col-100">
+                                    <p id="response"></p>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="list-block">
+                            <ul>
+                                <li>
+                                   <a class=
+                                    "item-link list-button form-to-json nnn"
+                                    data-context-name="trails" href=
+                                    "./partials/allTrails.html" onclick="signIn()" style=
+                                    "border-radius: 80px;border: 0px inset;height: 25px;width: 210px;background: rgba(30, 136, 229, 1.0);padding: 10px 20px;outline: 0;outline-offset: 0px; font-size: 18px;font-weight: bolder;color: #fff;display: block;margin: 0 auto;line-height:22px !important;">
+                                    Sign In</a>
+                                </li>
+                            </ul>
+                            
+                            
+                            <p><a class="button button-round fbLogin"
+                    data-context-name="trails" href="../partials/allTrails.html" id=
+                    "fbLogin">Login With Facebook</a></p>
+                            
+                            <div class="list-block-label">
+                                <p><a class=
+                                "open-signup-screen close-login-screen" href=
+                                "./partials/signup.html" style="color:#fff;">
+                                Create an account</a></p>
+                                
+                                <p><a class="close-login-screen"
+                                data-context-name="trails" href=
+                                "./partials/allTrails.html" style=
+                                "color:#fff;">Skip</a></p>
+                            </div>
+                        </div>
+                    </form>
+                    
+                  
+                </div>
+            </div>
+        </div>
+    </div><!--Login Pop Up finished-->
+    <!--SignUp Pop Up-->
+    <!--SignUp Pop Up finished--><!-- Status bar overlay for fullscreen mode-->
+    <div class="statusbar-overlay"></div><!-- Panels overlay-->
+    <div class="panel-overlay"></div><!-- Left panel with reveal effect-->
+    <div class="panel panel-left panel-reveal">
+    
+    
+
+    
+        <div class="content-block">
+            <div class="list-block">
+                <div class="list-group">
+                
+                    <div class="u-img" style="background-image:linear-gradient(rgba(238, 238, 238, 0.0), rgba(120, 120, 120, 0.7)), 
+url('assets/02.jpg'); height: 200px;
+width:300px;background-size: cover;
+background-position: center; background-size: cover; 
+background-repeat: no-repeat; margin-left: -15px; margin-top:-35px;"
+></div><!--Changes--><span class=
+                    "profy"></span> <!--Changes End--> 
+                    <!--<li><a href="./partials/projects.html" class="item-link item-content">
+                      <div class="item-inner"> 
+                        <div class="item-title">My Projects</div>
+                      </div></a></li>-->
+                    
+                    <a class="item-link item-content panel-close"
+                    href="#" data-template="about" >
+                    <div class="item-inner">
+                        About
+                    </div></a> 
+                         
+                    <a class="item-link item-content panel-close"
+                    data-context-name="trails" href="./partials/allTrails.html">
+                    <div class="item-inner">
+                        Browse All Trails
+                    </div></a> <a class="item-link item-content panel-close"
+                    href="./partials/contacts.html">
+                    <div class="item-inner">
+                        Search Nearby Trails
+                    </div></a> <span class="sign-out"><a class=
+                    "open-login-screen sign-out item-link item-content panel-close"
+                    href="#">
+                    <div class="item-inner">
+                        <span class="sign-out">Log In</span>
+                    </div></a></span>
+                </div>
+            </div>
+        </div>
+    </div><!-- Right panel with cover effect-->
+    <div class="panel panel-right panel-cover">
+        <div class="content-block"></div>
+    </div><!-- Views-->
+    <div class="views">
+        <!-- Your main view, should have "view-main" class-->
+        <div class="view view-main">
+            <!-- Top Navbar-->
+            <div class="navbar blue-bar">
+                <div class="navbar-inner">
+                    <div class="center sliding"><img src=
+                    "assets/menu-logo@1x.png"></div>
+                    <div class="right">
+                        <a class="link icon-only open-panel" href="#"><img src="assets/SlideMenu@2x.png" style="width: 52px;height:100%;"></a>
+                    </div>
+                </div>
+            </div>
+            <!-- Pages, because we need fixed-through navbar and toolbar, it has additional appropriate classes-->
+            <div class="pages navbar-through toolbar-through">
+                <!-- Index Page-->
+                <div class="page" data-page="index">
+                    <div class="page-content">
+                        <div class="content-block-title">
+                            Welcome To Mountain Climbers
+                        </div>
+                        <div class="content-block" id="trailjson">
+                            <div class="content-block-inner">
+                                <p>Thank you for using Mountain Climbers.</p>
+                            </div>
+                        </div><!-- <div class="list-block">
+                <ul>
+                  <li><a href="#" data-template="about" data-context-name="about" class="item-link item-content">
+                      <div class="item-inner"> 
+                        <div class="item-title">About Me</div>
+                      </div></a></li>
+                  <li><a href="./partials/projects.html" data-context-name="profile" class="item-link item-content">
+                      <div class="item-inner"> 
+                        <div class="item-title" >My Profile</div>
+                      </div></a></li>
+                  <li><a href="./partials/allTrails.html" data-context-name="trails" class="item-link item-content">
+                      <div class="item-inner">
+                        <div class="item-title">Browse All Trails</div>
+                      </div></a></li>
+                  <li><a href="./partials/contacts.html" class="item-link item-content">
+                      <div class="item-inner">
+                        <div class="item-title">Contacts</div>
+                      </div></a></li>
+                </ul>
+              </div>-->
+                    </div>
+                </div>
+            </div><!-- Bottom Toolbar-->
+            <div class="toolbar">
+                <div class="blue-toolbar">
+                    <div class="toolbar-inner">
+                        <a class="item-link item-content" data-context-name=
+                        "trails" href="./partials/allTrails.html"><img src=
+                        "assets/Card@2x.png" style="width: 52px;"></a> 
+                        <!--Changes--> <span class="proft"></span> 
+                        <!--Changes End--> <a class="item-link item-content"
+                        href="./partials/contacts.html"><img src="assets/MapApi@2x.png"
+                        style="width: 52px;"></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div><!-- Template7 templates-->
+    <script id="about" type="text/template7">
+      <div class="navbar">
+        <div class="navbar-inner">
+          <div class="left sliding"><a href="#" class="back link"> <i class="icon icon-back"></i><span>Back</span></a></div>
+            <div class="center sliding">About Mountain Climbers</div>
+          <div class="right"><a href="#" class="link icon-only open-panel"><img src="assets/SlideMenu@2x.png" style="width: 52px;height:100%;"></a></div>
+        </div>
+      </div>
+      <div class="pages">
+        <div data-page="about" class="page">
+          <div class="page-content">
+            <div class="content-block">
+              <div class="content-block-inner">
+              <img src ="assets/Logo-color-large.svg" style="width: 100%;
+    height: auto;">
+                <h4>Mountain Climbers is a social hiking experience catered to those searching for the perfect hiking trail. Looking for a trail that's dog friendly? The paw print on each trail card indicates that this is a trail that both you and your furry friend can enjoy. Looking for something a bit more difficult? Search the difficulty level of your choosing as we have a wide variety of trails for every hiking level. 
+                
+                Sign up and leave a review on a trail you've completed to let other hikers know about the great adventure you had, or things to look out for. <br/><br/>
+                Mountain Climbers is a BCIT Digital Design and Development project completed by Maria Taranova, Nicole Pearce, Akshay Chauhan, and Jonathan Lee. To leave feedback or comments please email us at nikkpearce@gmail.com. <br/><br/> Let's get out there and start hiking!
+               </h4>
+               
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </script> <!-- Path to Framework7 Library JS-->
+      <script type="text/javascript" src="js/instafeed.min.js"></script>
+
+
+    <script src="js/framework7.min.js" type="text/javascript">
+    </script> <!-- Path to your app js-->
+     
+    <script src="js/my-app.js" type="text/javascript">
+    </script> <!-- Google Map-->
+     
+    <script async defer src=
+    "https://maps.googleapis.com/maps/api/js?callback=initMap">
+    </script> 
+    <script>
+
+    $$('.panel-close').on('click', function (e) {
+        myApp.closePanel();
+    });
+
+    </script>
+</body>
+</html>

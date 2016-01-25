@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+</head>
+<body>
+    <div class="page no-navbar no-toolbar no-swipeback" data-page=
+    "signup-screen" style=
+    "background-color: lightblue; background-image:url('assets/bg-login.jpg');position: absolute;width: 100%;height: 100%;background-size: cover; -webkit-background-size: cover;-moz-background-size: cover;text-align:center;">
+    <div class="page-content signup-screen-content">
+            <div class="login-screen-title"><img src=
+            "assets/Logo-color-large.svg" style=
+            "height:auto;width:150px; margin-top:10px;"></div>
+            
+               <div class="col-100">
+                                    <p id="rrresponse" style="color:#fff;"></p>
+                                </div>
+            <form id="user-form" name="user-form" autocomplete="off">
+                <div class="list-block">
+                    <ul id="userForm">
+                        <li class="item-content">
+                            <div class="item-inner" style="background-color: #FFFFFF; border-radius:40px; opacity:0.5; margin-right:10px;">
+                                <div class="item-title label">
+                                    First Name
+                                </div>
+                                <div class="item-input">
+                                    <input name="fname" placeholder=
+                                    "First name" type="text" required>
+                                </div>
+                            </div>
+                        </li><br/>
+                        <li class="item-content">
+                            <div class="item-inner" style="background-color: #FFFFFF; border-radius:40px; opacity:0.5; margin-right:10px;">
+                                <div class="item-title label">
+                                    Last Name
+                                </div>
+                                <div class="item-input">
+                                    <input name="lname" placeholder=
+                                    "Your last name" type="text" required>
+                                </div>
+                            </div>
+                        </li><br/>
+                      
+                        <li class="item-content">
+                            <div class="item-inner" style="background-color: #FFFFFF; border-radius:40px; opacity:0.5; margin-right:10px;">
+                                <div class="item-title label">
+                                    Username
+                                </div>
+                                <div class="item-input">
+                                    <input name="username" placeholder=
+                                    "Your username" type="text" required>
+                                </div>
+                            </div>
+                        </li><br/>
+                            
+                        <li class="item-content">
+                            <div class="item-inner" style="background-color: #FFFFFF; border-radius:40px; opacity:0.5; margin-right:10px;">
+                                <div class="item-title label">
+                                    Password
+                                </div>
+                                <div class="item-input">
+                                    <input name="password" placeholder=
+                                    "Your password" type="password" pattern=".{6,20}">
+                                </div>
+                            </div>
+                        </li><br/>
+                                
+                    
+                        <li class="item-content">
+                            <div class="item-inner" style="background-color: #FFFFFF; border-radius:40px; opacity:0.5; margin-right:10px;">
+                                <div class="item-title label">
+                                    Email
+                                </div>
+                                <div class="item-input">
+                                    <input name="email" placeholder=
+                                    "Your email" type="email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}">
+                                </div>
+                            </div>
+                        </li><br/>
+                     
+                        <li class="item-content">
+                            <div class="item-inner" style="background-color: #FFFFFF; border-radius:40px; opacity:0.5; margin-right:10px; height:44px;">
+                                <div class="item-title label">
+                                    City
+                                </div><select name="city">
+                                    <option value="Vancouver">
+                                        Vancouver
+                                    </option>
+                                    <option value="Fraser Valley">
+                                        Fraser Valley
+                                    </option>
+                                    <option value="Pemberton">
+                                        Pemberton
+                                    </option>
+                                    <option value="Howe Sound">
+                                        Howe Sound
+                                    </option>
+                                    <option value="Ridge Meadows">
+                                        Ridge Meadows
+                                    </option>
+                                    <option value="Surrey">
+                                        Surrey
+                                    </option>
+                                    <option value="Langley">
+                                        Langley
+                                    </option>
+                                    <option value="The North Shore">
+                                        The North Shore
+                                    </option>
+                                    <option value="Tri Cities">
+                                        Tri Cities
+                                    </option>
+                                    <option value="Delta">
+                                        Delta
+                                    </option>
+                                    <option value="Whistler">
+                                        Whistler
+                                    </option>
+                                </select>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                
+             
+                <div class="list-block">
+                    <ul>
+                    
+                        <li>
+                            <a class="item-link list-button form-to-json" id="form">Create account</a>
+                        </li>
+                        <!--  <li><div class="fb-login-button" data-max-rows="1" data-size="xlarge" data-show-faces="true" data-auto-logout-link="true"></div></li>-->
+                    </ul>
+                    <div class="list-block">
+                        <p><a class="open-login-screen close-signup-screen"  style="color:#fff;">Already have an account?</a></p>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

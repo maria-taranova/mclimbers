@@ -1,0 +1,123 @@
+    <div class="navbar">
+        <div class="navbar-inner">
+            <div class="left sliding">
+                <a class="back link" href="#"><i class=
+                "icon icon-back"></i><span>Back</span></a>
+            </div>
+            <div class="center sliding"><img src=
+            "assets/menu-logo@1x.png"></div>
+            <div class="right">
+                <a class="link icon-only open-panel" href="#"><img src="assets/SlideMenu@2x.png" style="width: 52px;height:100%;"></a>
+            </div>
+        </div>
+    </div>
+    <div class="pages">
+        <div class="page" data-page="trail">
+            <div class="page-content">
+                <div class="content-block">
+                    <div class="content-block-inner">
+                                                  <h1><div title ="{{id}}" id="trailName" class="content-block-title">{{name}}</div></h1>
+
+                        <div class="row">
+                     
+                    
+                            
+                            <img class="col-100" src=
+                        "{{bgImage}}"></div><!--Hardcoded values-->
+                        
+
+ <div id="fg" class="swiper-container">
+        <div class="swiper-wrapper" id="instafeed">
+            
+        </div>
+        <!-- Add Pagination -->
+        <div class="swiper-pagination"></div>
+    </div> 
+
+
+   
+           <div class="content-block-title">Information</div>
+           <div class="list-block">
+                 
+     <ul>
+        <li class="item-content">
+          <div class="item-inner">
+            <h4><div class="item-title">City</div></h4>
+            <div class="item-after">{{city}}</div>
+          </div>
+        </li>
+           <li class="item-content">
+          <div class="item-inner">
+            <h4><div class="item-title">Name</div></h4>
+            <div class="item-after">{{name}}</div>
+          </div>
+        </li>
+        
+            <li class="item-content">
+          <div class="item-inner">
+            <h4><div class="item-title">Difficulty</div></h4>
+            <div class="item-after">{{difficulty}}</div>
+          </div>
+        </li>
+        
+        <li class="item-content">
+          <div class="item-inner">
+            <h4><div class="item-title">Distance</div></h4>
+            <div class="item-after">{{distance}}km</div>
+          </div>
+        </li>
+         
+            <li class="item-content">
+          <div class="item-inner">
+            <h4><div class="item-title">Season</div></h4>
+            <div class="item-after">{{season}}</div>
+          </div>
+        </li>
+         
+         {{#if dogFriendly}}
+              <li class="item-content"> <div class="item-inner"><div class="item-title"><h4>Dog Friendly</h4></div><div class="item-after"><i class="fa fa-paw fa-1x"></i></div> </div></li>
+
+{{/if}}     
+     {{#if bears}}
+                <li class="item-content"><div class="item-inner"><div class="item-title"><h4>Bears in the Area</h4></div><div class="item-after"><i class="fa fa-exclamation"></i></i> </div> </div> </li> 
+
+{{/if}}   
+          
+         
+        
+      </ul>                    
+                        
+                        </div>    
+    
+
+
+          
+        
+           
+         <div class="content-block-title">Description</div>
+        
+        <div  class="list-block media-list">
+                <ul style="padding:0 15px;"><br>
+            {{desc}}<br><br>
+            </ul>
+                
+                </div>
+       
+                  <div class="create-popup" id="tt"><a id="tt" href="#" class="button button-big button-round active">Submit Review</a></div>
+
+         <div class="content-block-title">Reviews</div>
+         
+        
+        <div  class="list-block media-list">
+                <ul id="comment">
+                    
+            </ul>
+                </div>
+          
+            
+        
+         
+             </div>
+        </div>
+        
+    </div>

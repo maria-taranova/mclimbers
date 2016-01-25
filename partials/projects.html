@@ -1,0 +1,83 @@
+<div class="navbar">
+  <div class="navbar-inner">
+    
+    <div class="right"><a href="#" class="link icon-only open-panel"><img src="assets/SlideMenu@2x.png" style="width: 52px;height:100%;"></a></div>
+  </div>
+</div>
+<div class="pages">
+  <div data-page="profile" class="page">
+    <div class="page-content">
+    
+        <div class="user-card"  style="text-align:center;">
+   
+  <img src="{{profilePicture}}" class="circular pic" id="{{id}}"/> 
+   
+            </div>
+         <div class="list-block" style="background-color: transparent;">
+      <ul>
+          
+        <li class="item-content" style="background-color: #FAFAFA;">
+          <div class="item-media"></i></div>
+          <div class="item-inner">
+            <h4><div class="item-title">Username</div></h4>
+            <div class="item-after">{{username}}</div>
+          </div>
+        </li>
+  </ul>  {{#if fname}}<ul>
+        <li class="item-content" style="background-color: #FAFAFA;">
+          <div class="item-media"></i></div>
+          <div class="item-inner">
+              <h4><div class="item-title">First name</div></h4>
+            <div class="item-after">{{fname}}</div>
+          </div>
+        </li>
+    </ul>{{/if}} 
+
+{{#if lname}}
+<ul>
+          
+        <li class="item-content" style="background-color: #FAFAFA;">
+          <div class="item-media"></div>
+          <div class="item-inner">
+            <h4><div class="item-title">Last name</div></h4>
+            <div class="item-after">{{lname}}</div>
+          </div>
+        </li>
+        
+     </ul>{{/if}} 
+
+{{#if region}}
+<ul>     
+        <li class="item-content" style="background-color: #FAFAFA;">
+          <div class="item-media"></div>
+          <div class="item-inner">
+            <h4><div class="item-title">Region</div></h4>
+            <div class="item-after">{{region}}</div>
+          </div>
+        </li>
+   </ul>{{/if}} 
+
+
+<ul>       
+   <li class="item-content" style="background-color: #FAFAFA;">
+          <div class="item-media"></div>
+          <div class="item-inner">
+               
+            <h4><div class="item-title">Reviews posted</div></h4>
+                     <a  onclick="getComments(this.id)" id="{{id}}" data-context-name="comments" href="./partials/comments.html">
+
+            <div class="item-after"><span class="badge">{{reviewsnum}}</span></div>
+          
+        </div>    </a> 
+        </li>
+        
+        </ul>
+   
+
+      </div>
+    </div>
+
+ 
+</div>
+
+</div>
