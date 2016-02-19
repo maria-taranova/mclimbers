@@ -1,3 +1,230 @@
+var $$ = Dom7;
+// Let's register Template7 helper so we can pass json string in links
+/*Template7.registerHelper('json_stringify', function(context) {
+    return JSON.stringify(context);
+});*/
+// Initialize your app
+var myApp = new Framework7({
+    animateNavBackIcon: true,
+    // Enable templates auto precompilation
+    precompileTemplates: true,
+    // Enabled pages rendering using Template7
+    swipePanel: 'left',
+    cache: true,
+    domCache: true,
+    cacheIgnore: ['singleTrail.html', 'projects.html'],
+    modalTitle: 'Mountain Climbers',
+    template7Pages: true,
+    // Specify Template7 data for pages
+    template7Data: {
+        // Will be applied for page with "projects.html" url
+        profile: {
+            id: '',
+            username: '',
+            region: '',
+            profilePicture: 'assets/Profile_pic-01.png',
+            fname: '',
+            lname: '',
+            reviewsnum: ''
+        },
+        // Will be applied for page with data-page="contacts"
+        'page:maps': {},
+        // Just plain data object that we can pass for other pages using data-contextName attribute
+        trails: [
+            //trails are pushed here
+        ]
+    }
+});
+/*pop up for sign up*/
+//log out
+var signOut = function() {
+    var sendData = {
+        logout: "true"
+    };
+    $$.ajax({
+        url: "./model/logout-session.php",
+        type: "POST",
+        dataType: "JSON",
+        data: sendData,
+        success: function(resp) {
+            sessionStorage.clear();;
+            myApp.template7Data.profile = {};
+            console.log(myApp.template7Data.profile);
+            //changing UI for unsigne user
+            $$(".u-img").html("You're Logged Out.");
+            $$(".sign-out").html(
+                '<span class="sign-out"> <a href="#" class="open-login-screen sign-out item-link item-content panel-close"><div class="item-inner"> Log In  </div></a></span>'
+            );
+            $$(".proft").html('');
+            $$(".profy").html('');
+            setTimeout(function() {
+                $$(".u-img").html("");
+            }, 2000);
+            //changes end            
+        }
+    });
+};
+//log out ends                  
+//Function to validate user
+var signIn = function() {
+    var formData = myApp.formToJSON('#user-signin');
+    //console.log(formData);
+    $$.ajax({
+        url: "./model/login-session.php",
+        type: "POST",
+        dataType: "JSON",
+        data: {
+            userData: formData
+        }, // could use this to ask for specific pieces of information (e.g., user profile, friends list, etc)
+        success: function(resp) {
+            
+            var userResponse = JSON.parse(resp);
+            //console.log("Session GET returned: ", resultData);
+            var status = userResponse.status;
+            if (status == 'success') {
+                var profile = myApp.template7Data.profile;
+                profile.id = userResponse.userinfo.id;
+                profile.username = userResponse.userinfo.username;
+                profile.region = userResponse.userinfo.region;
+               if (userResponse.userinfo.profilePicture >0){
+                profile.profilePicture = userResponse.userinfo.profilePicture;}
+                profile.lname = userResponse.userinfo.lname;
+                profile.fname = userResponse.userinfo.fname;
+                profile.reviewsnum = userResponse.userinfo.reviewsnum;
+                sessionStorage.username = userResponse.userinfo
+                    .username;
+            
+                $$("#response").html(
+                    "Cool, redirecting to main screen");
+                setTimeout(function() {
+                    myApp.closeModal(".login-screen")
+                }, 1000);
+                mainView.router.loadPage('allTrails.html');
+                $$("#response").html("");
+                if (sessionStorage.length > 0) { //add user's profile on nav bar
+                    //document.body.innerHTML = ("Log In");
+                    $$(".u-img").html(
+                    
+               "<h3 style='color:#fff; padding:30px 0 0 15px;'> &nbsp; Welcome, @" +
+                        profile.username +
+                        "</h3><img class='circular'src=" +
+                        profile.profilePicture +
+                              " style='height:75px; width:75px; margin:auto; margin-top:-15px; margin-left: 20px;'/>"
+                        
+                    );
+                    $$(".sign-out").html(
+                        "<a href='allTrails.html' onclick='signOut()' class='sign-out item-link item-content panel-close' data-context-name='trails''><div class='item-inner'>Sign Out</div></a>"
+                    );
+                    //changes     
+                    $$(".proft").html(
+                        '<a href="projects.html" data-context-name="profile" class="item-link item-content"><img src="assets/Profile@2x.png" style="width: 52px;"></i></a>'
+                    );
+                    $$(".profy").html(
+                        '<a href="projects.html" data-context-name="profile" class="item-link item-content panel-close"><div class="item-inner">Profile</div></a>'
+                    );
+                };
+                //changes end            
+            } else {
+                console.log("bad");
+                $$("#response").html(
+                    "Something wrong with username or password"
+                );
+            }
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            console.log(jqXHR.statusText, textStatus);
+        }
+    });
+};
+//end of user validation
+/*Create new user*/
+var newUser = function() {
+        var formData = myApp.formToJSON('#user-form');
+        console.log(formData);
+        $$.ajax({
+            url: "./model/user.php",
+            dataType: "json",
+            data: {
+                mode: 12,
+                userData: formData
+            },
+            type: "post",
+            complete: function(resp) {
+                console.log("LM working");
+                //loop through the package of information and grab their individual properties
+                console.log(sessionStorage);
+            }
+        });
+        
+   
+    
+  }  
+    
+    
+         
+ 
+    
+    
+    
+ 
+    //end of new user creation
+console.log(myApp.template7Data.trails);
+// Add main View
+var mainView = myApp.addView('.view-main', {
+    // Enable dynamic Navbar
+    dynamicNavbar: true,
+    // domCache: true
+});
+gettrailJSON();
+var validation = function() { //enable disbled button
+    var submit = document.getElementById("submit");
+    submit.setAttribute("class", "button form-to-json");
+};
+var send = function() {
+    var trailName = document.forms["reviewForm"]["name"].value;
+    var trailReview = document.forms["reviewForm"]["review"].value;
+    var trailRating = $$('.popup').find('input[name="rating"]:checked').val();
+    console.log(trailRating);
+    //user input for review validation
+    if (trailName == null || trailName == "", trailReview == null ||
+        trailReview == "", trailRating == null || trailRating == "") {
+        if (trailName == null || trailName == "") {
+            $$("#rresponse").html("Please, fill in Trail Name");
+        } else if (trailReview == null || trailReview == "") {
+            $$("#rresponse").html("Please, add your review");
+        } else if (trailRating == null || trailRating == "") {
+            console.log(trailRating);
+            console.log(formData);
+            $$("#rresponse").html("Please, add star rating");
+        }
+    } else {
+        var formData = myApp.formToJSON('#my-form'); //stringify data from input
+        //as soon as the document is ready, we connect to the server file
+        $$.ajax({
+            url: "./model/server.php",
+            dataType: "json",
+            data: {
+                mode: 1,
+                userID:  myApp.template7Data.profile.id,
+                newReview: formData
+            },
+            type: "post",
+            complete: function(resp) {
+                //loop through the package of information and grab their individual properties
+                document.getElementById("rresponse").innerHTML =
+                    "Thanks, your review is submitted";
+                document.getElementById("comment").innerHTML =
+                    ""; //removes old comments
+                setTimeout(function() {
+                    myApp.closeModal(".popup")
+                }, 1000);
+                var trailId = document.getElementById(
+                    "trailName").title;
+                getimagesJSON(trailId);
+            }
+        });
+    };
+};
 
 function gettrailJSON() {
     $$.ajax({
@@ -7,468 +234,885 @@ function gettrailJSON() {
             mode: 0
         },
         type: "post",
-        success: function(e) {
-            var t = 0;
-            for (var a in e) t++;
-            for (var a in e) e[a].dogFriendly = parseInt(e[a].dogFriendly), e[a].bears = parseInt(e[a].bears), myApp.template7Data.trails.push(e[a]);
-            $$("#trailjson").html("<h4>" + t + " trails are in our database</h4>")
-        }
-    })
-}
-
-function getComments(e) {
-    var e = e;
-    $$.ajax({
-        url: "./model/server.php",
-        dataType: "json",
-        data: {
-            mode: 9,
-            id: e
-        },
-        type: "POST",
-        dataType: "json",
-        success: function(e) {
-            for (var t in e) $$("#user-comments").append("<li  class='swipeout'> <div class='swipeout-content'> <a href='#' class='item-content item-link' style='color: black'><div class='item-inner'><div class='item-title-row'><div class='item-title'>" + e[t].name + "</div><div class='item-text'>" + e[t].reviewText + "</div></div></div></a></div><div class='swipeout-actions-right'><a href='./partials/singleTrail.html' data-context-name='trails." + (e[t].trailid - 1) + "' id='" + parseInt(e[t].trailid) + "' class='mark'>View trail</a><a href='#' id='" + parseInt(e[t].id) + "' class='swipeout-delete remove'>Delete</a></div></li>")
-        }
-    })
-}
-
-function getimagesJSON(e) {
-    var e = e;
-    $$.ajax({
-        url: "./model/server.php",
-        dataType: "json",
-        data: {
-            mode: 1,
-            term: e
-        },
-        type: "POST",
-        dataType: "json",
-        success: function(e) {
-            for (var t in e)
-                for (var a in e[t].reviews) {
-                    var i = e[t].reviews[a].review,
-                        n = e[t].reviews[a].username,
-                        s = e[t].reviews[a].profilePicture,
-                        r = parseFloat(e[t].reviews[a].rating),
-                        o = '<li><div class="item-content"> <div class="item-media"><img src="' + s + '" width="44" style="background-image: url(' + randomBG() + ')"></div> <div class="item-inner">  <div class="item-title-row"><div class="item-title">' + n + '</div> <div class="item-after star"></div> </div><div class="item">' + i + "</div></div></div> </li>";
-                    $$("#comment").append(o);
-                    var l = document.createElement("span");
-                    l.setAttribute("class", "class");
-                    for (var c = 0; r > c; c++) {
-                        var m = document.createElement("i");
-                        m.setAttribute("class", "fa fa-star"), l.appendChild(m)
-                    }
-                    for (var p = 5 - r, c = 0; p > c; c++) {
-                        var d = document.createElement("i");
-                        d.setAttribute("class", "fa fa-star-o"), l.appendChild(d)
-                    }
-                    $$(".star").append(l)
-                }
-        }
-    })
-}
-var $$ = Dom7,
-    myApp = new Framework7({
-        animateNavBackIcon: !0,
-        precompileTemplates: !0,
-        swipePanel: "left",
-        cache: !0,
-        domCache: !0,
-        cacheIgnore: ["./partials/singleTrail.html", "./partials/projects.html"],
-        modalTitle: "Mountain Climbers",
-        template7Pages: !0,
-        template7Data: {
-            profile: {
-                id: "",
-                username: "",
-                region: "",
-                profilePicture: "assets/Profile_pic-01.png",
-                fname: "",
-                lname: "",
-                reviewsnum: ""
-            },
-            "page:maps": {},
-            trails: []
-        }
-    }),
-    signOut = function() {
-        var e = {
-            logout: "true"
-        };
-        $$.ajax({
-            url: "./model/logout-session.php",
-            type: "POST",
-            dataType: "JSON",
-            data: e,
-            success: function(e) {
-                sessionStorage.clear(), myApp.template7Data.profile = {}, $$(".u-img").html("You're Logged Out."), $$(".sign-out").html('<span class="sign-out"> <a href="#" class="open-login-screen sign-out item-link item-content panel-close"><div class="item-inner"> Log In  </div></a></span>'), $$(".proft").html(""), $$(".profy").html(""), setTimeout(function() {
-                    $$(".u-img").html("")
-                }, 2e3)
+        success: function(resultTrails) {
+            console.log(resultTrails);
+            var count = 0;
+            for (var i in resultTrails) {
+                count++;
             }
-        })
-    },
-    signIn = function() {
-        var e = myApp.formToJSON("#user-signin");
-        $$.ajax({
-            url: "./model/login-session.php",
-            type: "POST",
-            dataType: "JSON",
-            data: {
-                userData: e
-            },
-            success: function(e) {
-                var t = JSON.parse(e),
-                    a = t.status;
-                if ("success" == a) {
-                    var i = myApp.template7Data.profile;
-                    i.id = t.userinfo.id, i.username = t.userinfo.username, i.region = t.userinfo.region, t.userinfo.profilePicture > 0 && (i.profilePicture = t.userinfo.profilePicture), i.lname = t.userinfo.lname, i.fname = t.userinfo.fname, i.reviewsnum = t.userinfo.reviewsnum, sessionStorage.username = t.userinfo.username, $$("#response").html("Cool, redirecting to main screen"), setTimeout(function() {
-                        myApp.closeModal(".login-screen")
-                    }, 1e3), mainView.router.loadPage("./partials/allTrails.html"), $$("#response").html(""), sessionStorage.length > 0 && ($$(".u-img").html("<h3 style='color:#fff; padding:30px 0 0 15px;'> &nbsp; Welcome, @" + i.username + "</h3><img class='circular'src=" + i.profilePicture + " style='height:75px; width:75px; margin:auto; margin-top:-15px; margin-left: 20px;'/>"), $$(".sign-out").html("<a href='./partials/allTrails.html' onclick='signOut()' class='sign-out item-link item-content panel-close' data-context-name='trails''><div class='item-inner'>Sign Out</div></a>"), $$(".proft").html('<a href="./partials/projects.html" data-context-name="profile" class="item-link item-content"><img src="assets/Profile@2x.png" style="width: 52px;"></i></a>'), $$(".profy").html('<a href="./partials/projects.html" data-context-name="profile" class="item-link item-content panel-close"><div class="item-inner">Profile</div></a>'))
-                } else $$("#response").html("Something wrong with username or password")
-            },
-            error: function(e, t, a) {}
-        })
-    },
-    newUser = function() {
-        var e = myApp.formToJSON("#user-form");
-        $$.ajax({
-            url: "./model/user.php",
-            dataType: "json",
-            data: {
-                mode: 12,
-                userData: e
-            },
-            type: "post",
-            complete: function(e) {}
-        })
-    },
-    mainView = myApp.addView(".view-main", {
-        dynamicNavbar: !0
-    });
-gettrailJSON();
-var validation = function() {
-        var e = document.getElementById("submit");
-        e.setAttribute("class", "button form-to-json")
-    },
-    send = function() {
-        var e = document.forms.reviewForm.name.value,
-            t = document.forms.reviewForm.review.value,
-            a = $$(".popup").find('input[name="rating"]:checked').val();
-        if (null == a || "" == a) null == e || "" == e ? $$("#rresponse").html("Please, fill in Trail Name") : null == t || "" == t ? $$("#rresponse").html("Please, add your review") : (null == a || "" == a) && $$("#rresponse").html("Please, add star rating");
-        else {
-            var i = myApp.formToJSON("#my-form");
-            $$.ajax({
-                url: "./model/server.php",
-                dataType: "json",
-                data: {
-                    mode: 1,
-                    userID: myApp.template7Data.profile.id,
-                    newReview: i
-                },
-                type: "post",
-                complete: function(e) {
-                    document.getElementById("rresponse").innerHTML = "Thanks, your review is submitted", document.getElementById("comment").innerHTML = "", setTimeout(function() {
-                        myApp.closeModal(".popup")
-                    }, 1e3);
-                    var t = document.getElementById("trailName").title;
-                    getimagesJSON(t)
-                }
-            })
+            for (var i in resultTrails) {
+                resultTrails[i].dogFriendly = parseInt(
+                    resultTrails[i].dogFriendly);
+                resultTrails[i].bears = parseInt(resultTrails[i]
+                    .bears);
+                myApp.template7Data.trails.push(resultTrails[i]);
+            }
+            console.log(myApp.template7Data);
+            $$("#trailjson").html("<h4>" + count +
+                " trails are in our database</h4>");
         }
-    };
-myApp.onPageAfterAnimation("comments", function(e) {
-    $$(".mark").on("click", function() {
-        var e = this.id;
-        getimagesJSON(e)
-    }), $$(".remove").on("click", function() {
-        var e = this.id;
+    });
+};
+
+
+function getComments(id) {
+        var gallery = [];
+        var id = id;
         $$.ajax({
             url: "./model/server.php",
             dataType: "json",
             data: {
-                mode: 8,
-                id: e
+                mode: 9,
+                id: id
             },
             type: "POST",
             dataType: "json",
-            success: function(e) {}
-        })
-    })
-});
-var ranImage = ["http://backgrounds.funmunch.com/background/pattern_background_a4.gif", "http://www.uisdc.com/wp-content/uploads/2013/09/11-Squares_t2.jpg", "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcRybqpa6ux8ZhDB_eBWlTo5EbMbze5rbmjjGh_3Xp1LnsGr5zSHMQ"],
-    rand = function() {
-        return Math.floor(Math.random() * ranImage.length)
-    },
-    randomBG = function() {
-        var e = ranImage[rand()];
-        return e
-    };
-myApp.onPageBeforeInit("trail", function(e) {
-    imgs = [];
-    var t = $$("#trailName").text(),
-        a = t.replace(/\s+/g, ""),
-        n = $$.toCamelCase(a);
-    ! function(e, t, a) {
-        var i, n = e.getElementsByTagName(t)[0];
-        e.getElementById(a) || (i = e.createElement(t), i.id = a, i.src = "//connect.facebook.net/en_US/sdk.js", n.parentNode.insertBefore(i, n))
-    }(document, "script", "facebook-jssdk");
-    var s = new Instafeed({
-        get: "tagged",
-        tagName: n,
-        clientId: "467ede5a6b9b48ae8e03f4e2582aeeb3",
-        limit: 25,
-        sortBy: "random",
-        template: '<div class="swiper-slide"><img src={{image}} style="height: 9vh; border: 2px solid white;" class="gallery"/></div>',
-        success: function(e) {
-            var t, a = e.data;
-            for (i = 0; i < a.length; i++) {
-                var n = a[i];
-                t = {
-                    caption: n.user.username,
-                    url: n.images.standard_resolution.url
-                }, imgs.push(t)
-            }
-        }
+            success: function(commentData) {
+                    // console.log(trailData);
+                    for (var index in commentData) {
+                                    
+                    $$("#user-comments").append("<li  class='swipeout'> <div class='swipeout-content'> <a href='#' class='item-content item-link' style='color: black'><div class='item-inner'><div class='item-title-row'><div class='item-title'>"+commentData[index].name+"</div><div class='item-text'>"+commentData[index].reviewText+"</div></div></div></a></div><div class='swipeout-actions-right'><a href='singleTrail.html' data-context-name='trails."+(commentData[index].trailid-1)+"' id='"+parseInt(commentData[index].trailid)+"' class='mark'>View trail</a><a href='#' id='"+parseInt(commentData[index].id)+"' class='swipeout-delete remove'>Delete</a></div></li>");
+                    } //end for itirating trough trailData
+                } //end for succes function in ajax
+        }); //end for ajax in getimagesJSON
+    } //end of getcommentJSON
+
+
+myApp.onPageAfterAnimation('comments', function(page) {
+
+    $$('.mark').on('click', function () {
+        var trailId = this.id;
+                console.log(trailId);
+                getimagesJSON(trailId);
     });
-    s.run()
+    
+       $$('.remove').on('click', function () {
+           var reviewId = this.id;
+           
+           $$.ajax({
+            url: "./model/server.php",
+            dataType: "json",
+            data: {
+                mode: 8,
+                id: reviewId
+            },
+            type: "POST",
+            dataType: "json",
+            success: function(resp) {
+            
+                console.log(resp);
+            
+            }
+           
+           });
+    });
+
 });
-var imgs = [];
-myApp.onPageAfterAnimation("trail", function(e) {
-        var t = /Firefox/i.test(navigator.userAgent);
-        t && (document.getElementById("tt").style.display = "none");
-        var a = myApp.photoBrowser({
-            photos: imgs,
-            spaceBetween: 1,
-            lazyLoading: !0,
-            type: "popup"
-        });
-        $$(".swiper-slide").on("click", function() {
-            var e = $$(this).data("swiper-slide-index");
-            a.open(e - 1)
-        });
-        new Swiper(".swiper-container", {
-            slidesPerView: "5",
-            paginationClickable: !0,
-            spaceBetween: 0,
-            freeMode: !0,
-            loop: !0
-        });
-        $$(".create-popup").on("click", function() {
-            var e = document.getElementById("trailName").innerText,
-                t = document.getElementById("trailName").title;
-            if ("" === myApp.template7Data.profile.username || sessionStorage.length < 1) var a = '<div class="popup"><div class="content-block"><p><href="#" class="close-popup">Close me</a>                  </p></div><div id="my-form" name="reviewForm" class="list-block"><ul><li><div class="item-content"><div class="item-inner">Hey there! Have something to share?</div></div></li><li><div class="item-content"><div class="item-inner">Only registered users can contribute.</div></div></li><li> <div class="item-content"> <div class="item-inner"><a class="open-login-screen close-popup" href="#" >Please, log in</a></div></li><li> <div class="item-content"> <div class="item-inner"><a href="./partials/signup.html" class="close-popup">Or create an account</a></div></li></ul></div>';
-            else var a = '<div class="popup"><div class="content-block"><p>Form to submit review</p><p><a id="' + t + '" href="#" class="close-popup">Close me</a></p></div><form id="my-form" name="reviewForm" class="list-block"><ul><li><div class="item-content"><div class="item-inner"><div class="item-title label">Review for</div> <div class="item-input"> <input type="text" id ="trailInput" name="name"   value="' + e + '"> </div></div></li><li><div class="item-content"><div class="item-inner"><div class="item-title label">Trail review</div> <div class="item-input"> <textarea type="text" name="review"  maxlength="140" id="review" onkeyup="validation()"></textarea> </div></div></li><li> <div class="item-content"> <div class="item-inner"><div class="item-title label">Rating</div> <div class="item-input"><span class="star-rating"><input id="star-rating-5"  class="star-rating__input" type="radio" name="rating" value="5"><i></i> <label class="star-rating__ico fa fa-star-o fa-lg" for="star-rating-5" title="5 out of 5 stars"></label><input id="star-rating-4"  class="star-rating__input" type="radio" name="rating" value="4"><i></i><label class="star-rating__ico fa fa-star-o fa-lg" for="star-rating-4" title="4 out of 5 stars"></label><input id="star-rating-3"  class="star-rating__input" type="radio" name="rating" value="3"><i></i> <label class="star-rating__ico fa fa-star-o fa-lg" for="star-rating-3" title="3 out of 5 stars"></label><input id="star-rating-2"  class="star-rating__input" type="radio" name="rating" value="2"><i></i> <label class="star-rating__ico fa fa-star-o fa-lg" for="star-rating-2" title="2 out of 5 stars"></label><input id="star-rating-1" class="star-rating__input" type="radio" name="rating" value="1"><i></i> <label class="star-rating__ico fa fa-star-o fa-lg" for="star-rating-1" title="1 out of 5 stars"></label></span> </div></div></li></ul></form><div class="content-block"> <a href="#" id="submit" class="button form-to-json disabled" onclick="send();">Submit Review</a><div class="item-content" id="rresponse"></div></div>';
-            myApp.popup(a), data = []
-        })
-    }), myApp.onPageInit("maps", function(e) {
-        function t() {
-            function e(e, t, i) {
-                var n = '<div id="content"><div id="siteNotice"></div><h2 id="firstHeading" class="firstHeading">' + s[r].name + '</h2><div id="bodyContent">' + s[r].desc + '</div><div id ="' + s[r].avRating + '"><div id="rating"><p> The trail has <b>  ' + parseFloat(s[r].avRating) + '</b> out of 5 star rating</p></div><a href="./partials/singleTrail.html" data-context-name="trails.' + (parseInt(s[r].id) - 1) + '" onclick= "getimagesJSON(this.id)" id="' + s[r].id + '">More Trail Information</a></div>',
-                    o = new google.maps.InfoWindow({
-                        content: n,
-                        maxWidth: 200,
-                        opacity: .75
-                    });
-                google.maps.event.addListener(o, "closeclick", function() {
-                    t.setZoom(10)
-                }), google.maps.event.addListener(e, "click", function() {
-                    o.open(t, e), t.panTo(e.getPosition())
-                });
-                var l = document.getElementById("searchbar");
-                l.onkeyup = function() {
-                    for (var e = 0; e < s.length; e++) {
-                        var i;
-                        if (l.value.toLowerCase() == s[e].name.toLowerCase()) return i = s[e].id - 1, t.setZoom(14), void t.setCenter(a[i].getPosition())
-                    }
-                }
-            }
-            navigator.geolocation ? navigator.geolocation.getCurrentPosition(function(e) {
-                var t = {
-                    lat: e.coords.latitude,
-                    lng: e.coords.longitude
+
+
+/*Individual trail*/
+//individual trail finished
+
+
+
+                
+                  var ranImage = ['http://backgrounds.funmunch.com/background/pattern_background_a4.gif','http://www.uisdc.com/wp-content/uploads/2013/09/11-Squares_t2.jpg', 'https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcRybqpa6ux8ZhDB_eBWlTo5EbMbze5rbmjjGh_3Xp1LnsGr5zSHMQ'];
+var rand = function() {
+    return Math.floor(Math.random()*ranImage.length);
+};
+var randomBG = function() {
+    var r = ranImage[rand()];
+    return r;
+};
+    
+
+function getimagesJSON(id) {
+        var gallery = [];
+        var id = id;
+        console.log(id);
+        $$.ajax({
+            url: "./model/server.php",
+            dataType: "json",
+            data: {
+                mode: 1,
+                term: id
+            },
+            type: "POST",
+            dataType: "json",
+            success: function(trailData) {
+                    
+              console.log(trailData);
+                for (var index in trailData) {
+                        
+                               for (var review in trailData[index].reviews) { //itirate inside reviews
+                           
+                            var reviewText = trailData[index].reviews[
+                                review].review;
+                            var username = trailData[index].reviews[
+                                review].username;
+                            
+                  
+                               var profilePicture = trailData[index].reviews[
+                                review].profilePicture;
+                            
+                            var rating = parseFloat(trailData[index].reviews[
+                                review].rating);
+                            var reviewsList = '<li>' +
+                                '<div class="item-content">' +
+                                ' <div class="item-media"><img src="' +
+                                profilePicture + '" width="44" style="background-image: url('+randomBG()+')"></div>' +
+                                ' <div class="item-inner">' +
+                                '  <div class="item-title-row">' +
+                                '<div class="item-title">' + username +
+                                '</div>' +
+                                ' <div class="item-after star"></div>' +
+                                ' </div>' + '<div class="item">' +
+                                reviewText + '</div>' + '</div>' +
+                                '</div>' + ' </li>'
+                            $$("#comment").append(reviewsList);
+                            var divstar = document.createElement("span");
+                            divstar.setAttribute("class", "class");
+                            for (var i = 0; i < rating; i++) { //5 star rating
+                                var y = document.createElement("i");
+                                y.setAttribute("class", "fa fa-star");
+                                divstar.appendChild(y);
+                            }; //end for star rating
+                            var empty = 5 - rating;
+                            console.log(empty);
+                            for (var i = 0; i < empty; i++) { //5 star rating
+                                var x = document.createElement("i");
+                                x.setAttribute("class", "fa fa-star-o");
+                                divstar.appendChild(x);
+                            }; //end for star rating
+                            $$(".star").append(divstar);
+                        }; //end for reviews loop
+                        
+                      /*  for (var link in trailData[index].pictures) { //itirate inside pictures links
+                            data.push(trailData[index].pictures[link]); //passing images to photobrowser
+                            var link = trailData[index].pictures[link].url;
+                            var div = document.createElement("div");
+                            div.setAttribute("class", "swiper-slide");
+                            var pic = document.createElement("img");
+                            pic.src = link;
+                            pic.style.cssText =
+                                "height: 9vh; border: 2px solid white; ";
+                            //data.push(trailData[index].pictures[link]);
+                            div.appendChild(pic);
+                            pic.setAttribute("id", "gallery");
+                            document.getElementById("wrapper").appendChild(
+                                div);
+                        }; //end for pictures loop*/
+                                               
+                        
+                 
+                    } //end for itirating trough trailData
+                } //end for succes function in ajax
+        }); //end for ajax in getimagesJSON
+    } //end of getimagesJSON
+
+myApp.onPageBeforeInit('trail', function(page) {
+    
+    imgs = [];
+    
+      //photobrowser finished 
+    var trailName =$$("#trailName").text();
+    var trailNameNStr = trailName.replace(/\s+/g, '')
+    var hashtag = $$.toCamelCase(trailNameNStr);
+    console.log(hashtag);
+    
+    
+    
+             (function(d, s, id) {
+                                                        var js, fjs = d.getElementsByTagName(s)[0];
+                                                        if (d.getElementById(id)) {
+                                                            return;
+                                                        }
+                                                        js = d.createElement(s);
+                                                        js.id = id;
+                                                        js.src = "//connect.facebook.net/en_US/sdk.js";
+                                                        fjs.parentNode.insertBefore(js, fjs);
+                                                    }(document, 'script', 'facebook-jssdk'));
+
+                                                       var feed = new Instafeed({
+                                                            get: 'tagged',
+                                                            tagName: hashtag,
+                                                            clientId: '467ede5a6b9b48ae8e03f4e2582aeeb3',
+                                                            limit: 25,
+                                                            sortBy: 'random',
+                                                      template: '<div class="swiper-slide"><img src={{image}} style="height: 9vh; border: 2px solid white;" class="gallery"/></div>',
+                                                          success: function (data) {
+            // read the feed data and create owr own data struture.
+            var images = data.data;
+            var result;
+                                                              
+            for (i = 0; i < images.length; i++) {
+                var image = images[i];
+                result = {
+                        caption: image.user.username,
+                        url: image.images.standard_resolution.url
                 };
-                n.setCenter(t), n.setZoom(16);
-                var a = "assets/Marker_user@2x.png";
-                new google.maps.Marker({
-                    position: t,
-                    animation: google.maps.Animation.DROP,
-                    map: n,
-                    icon: a,
-                    title: "you're here"
-                })
-            }, function() {
-                handleLocationError(!0, infoWindow, n.getCenter())
-            }) : handleLocationError(!1, infoWindow, n.getCenter());
-            for (var t = [{
-                    stylers: [{
-                        saturation: -80
-                    }]
-                }, {
-                    featureType: "road.arterial",
-                    elementType: "geometry",
-                    stylers: [{
-                        hue: "#00ffee"
-                    }, {
-                        saturation: 50
-                    }]
-                }, {
-                    featureType: "poi.business",
-                    elementType: "labels",
-                    stylers: [{
-                        visibility: "off"
-                    }]
-                }], i = {
-                    center: {
-                        lat: 49.2915434,
-                        lng: -122.79668420000002
-                    },
-                    zoom: 9,
-                    mapTypeId: google.maps.MapTypeId.ROADMAP
-                }, n = new google.maps.Map(document.getElementById("map-canvas"), i), s = (document.getElementById("trailsAuto"), myApp.template7Data.trails), r = 0; r < s.length; r++) {
-                var o = parseFloat(s[r].latitude),
-                    l = parseFloat(s[r].longitude),
-                    c = "assets/Marker@2x.png",
-                    m = new google.maps.Marker({
-                        position: {
-                            lat: o,
-                            lng: l
-                        },
-                        animation: google.maps.Animation.DROP,
-                        map: n,
-                        title: s[r].name,
-                        icon: c
-                    });
-                m.metadata = {
-                    type: "point",
-                    id: s[r].id
-                }, e(m, n, s[r]), a.push(m), $$(".dd").append('<option value="' + s[r].name + '"/>')
+                    
+                    imgs.push(result);
+              
+                          
             }
-            n.setOptions({
-                styles: t
-            })
+                      }
+                                                       });
+                                                        feed.run();
+});
+
+var imgs = []; //this array passes images to photobrowser
+
+
+myApp.onPageAfterAnimation('trail', function(page) {
+    //var trailId = document.getElementById("trailName").title;
+    //getimagesJSON(trailId);
+    var FIREFOX = /Firefox/i.test(navigator.userAgent); //do not allow users on Firefox to submit reviews
+    if (FIREFOX) {
+        console.log("me");
+        document.getElementById("tt").style.display = 'none';
+    }
+    /*Pop photobrowser*/
+    var myPB = myApp.photoBrowser({
+        //pb options:
+        photos: imgs,
+        spaceBetween: 1,
+        lazyLoading: true,
+        type: 'popup' // 'popup' or 'page' or 'standalone'
+    });
+    $$('.swiper-slide').on('click', function() {
+        var gv= $$(this).data("swiper-slide-index");
+        console.log(gv);
+       console.log(imgs);
+         console.log(myPB);
+        myPB.open(gv-1);
+    });
+  
+    
+                                                        
+    /*Swiper*/
+    var swiper = new Swiper('.swiper-container', {
+        //pagination: '.swiper-pagination',
+        slidesPerView: '5',
+        paginationClickable: true,
+        spaceBetween: 0,
+        freeMode: true,
+        loop: true
+    }); //swiper finished
+    /*Pop-up review*/
+    /*Submit review*/
+    $$('.create-popup').on('click', function() { //popup to submit review
+        var trailName = document.getElementById("trailName").innerText;
+        //to get name of a trail for a popup
+        var trailId = document.getElementById("trailName").title;
+        //if user in not registered, review can not be subbmitted
+        if (myApp.template7Data.profile.username === "" ||
+            sessionStorage.length < 1) {
+            var popupHTML = '<div class="popup">' +
+                '<div class="content-block"><p><href="#" class="close-popup">Close me</a>                  </p>' +
+                '</div>' +
+                '<div id="my-form" name="reviewForm" class="list-block">' +
+                '<ul>' + '<li>' + '<div class="item-content">' +
+                '<div class="item-inner">Hey there! Have something to share?</div>' +
+                '</div>' + '</li>' + '<li>' +
+                '<div class="item-content">' +
+                '<div class="item-inner">Only registered users can contribute.</div>' +
+                '</div>' + '</li>' + '<li>' +
+                ' <div class="item-content">' +
+                ' <div class="item-inner"><a class="open-login-screen close-popup" href="#" >Please, log in</a></div>' +
+                '</li>'  + '<li>' +
+                ' <div class="item-content">' +
+                ' <div class="item-inner"><a href="signup.html" class="close-popup">Or create an account</a></div>' +
+                '</li>' + '</ul>' + '</div>';
+        } else { //if user in registered, submitt review
+            var popupHTML = '<div class="popup">' +
+                '<div class="content-block">' +
+                '<p>Form to submit review</p>' + '<p><a id="' +
+                trailId +
+                '" href="#" class="close-popup">Close me</a></p>' +
+                '</div>' +
+                '<form id="my-form" name="reviewForm" class="list-block">' +
+                '<ul>' + '<li>' + '<div class="item-content">' +
+                '<div class="item-inner">' +
+                '<div class="item-title label">Review for</div>' +
+                ' <div class="item-input">' +
+                ' <input type="text" id ="trailInput" name="name"   value="' +
+                trailName + '">' + ' </div>' + '</div>' +
+                '</li>' + '<li>' + '<div class="item-content">' +
+                '<div class="item-inner">' +
+                '<div class="item-title label">Trail review</div>' +
+                ' <div class="item-input">' +
+                ' <textarea type="text" name="review"  maxlength="140" id="review" onkeyup="validation()">' +
+                '</textarea>' + ' </div>' + '</div>' + '</li>' +
+                '<li>' + ' <div class="item-content">' +
+                ' <div class="item-inner">' +
+                '<div class="item-title label">Rating</div>' +
+                ' <div class="item-input">' +
+                '<span class="star-rating">' +
+                '<input id="star-rating-5"  class="star-rating__input" type="radio" name="rating" value="5"><i></i>' +
+                ' <label class="star-rating__ico fa fa-star-o fa-lg" for="star-rating-5" title="5 out of 5 stars"></label>' +
+                '<input id="star-rating-4"  class="star-rating__input" type="radio" name="rating" value="4"><i></i>' +
+                '<label class="star-rating__ico fa fa-star-o fa-lg" for="star-rating-4" title="4 out of 5 stars"></label>' +
+                '<input id="star-rating-3"  class="star-rating__input" type="radio" name="rating" value="3"><i></i>' +
+                ' <label class="star-rating__ico fa fa-star-o fa-lg" for="star-rating-3" title="3 out of 5 stars"></label>' +
+                '<input id="star-rating-2"  class="star-rating__input" type="radio" name="rating" value="2"><i></i>' +
+                ' <label class="star-rating__ico fa fa-star-o fa-lg" for="star-rating-2" title="2 out of 5 stars"></label>' +
+                '<input id="star-rating-1" class="star-rating__input" type="radio" name="rating" value="1"><i></i>' +
+                ' <label class="star-rating__ico fa fa-star-o fa-lg" for="star-rating-1" title="1 out of 5 stars"></label>' +
+                '</span>' + ' </div>' + '</div>' + '</li>' +
+                '</ul>' + '</form>' +
+                '<div class="content-block">' +
+                ' <a href="#" id="submit" class="button form-to-json disabled" onclick="send();">Submit Review</a>' +
+                '<div class="item-content" id="rresponse">' +
+                '</div>' + '</div>';
         }
-        var a = [];
-        t()
-    }), myApp.onPageInit("profile", function(e) {
-        function t() {
+        myApp.popup(popupHTML);
+        data = [];
+    }); //popup review finished
+});
+
+
+
+
+/*Google Maps code*/
+myApp.onPageInit('maps', function(page) {
+    var markersArray = [];
+
+    function initialize() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(
+                position) {
+                var pos = {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude
+                };
+                map.setCenter(pos);
+                map.setZoom(16); //zoom if geolocating is allowed
+          var iconBase = 'assets/Marker_user@2x.png';      
+         var marker = new google.maps.Marker({
+                position: pos,
+                animation: google.maps.Animation.DROP,
+                map: map,
+                 icon: iconBase,
+                title: "you're here",
+            });
+                
+            }, function() {
+                handleLocationError(true, infoWindow, map.getCenter());
+            });
+        } else {
+            // Browser doesn't support Geolocation
+            handleLocationError(false, infoWindow, map.getCenter());
+        }
+        var styles = [{
+            stylers: [{
+      saturation: -80
+    }]
+  }, {
+    featureType: "road.arterial",
+    elementType: "geometry",
+    stylers: [{
+      hue: "#00ffee"
+    }, {
+      saturation: 50
+    }]
+  }, {
+    featureType: "poi.business",
+    elementType: "labels",
+    stylers: [{
+      visibility: "off"
+    }]
+  }];
+
+        var mapProp = {
+            center: {
+                lat: 49.2915434,
+                lng: -122.79668420000002
+            },
+            zoom: 9,
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+        var map = new google.maps.Map(document.getElementById(
+            'map-canvas'), mapProp);
+        var y = document.getElementById('trailsAuto');
+        var obj = myApp.template7Data.trails;
+        for (var i = 0; i < obj.length; i++) {
+            var lat = parseFloat(obj[i].latitude);
+            var long = parseFloat(obj[i].longitude);
+            var iconbase2 = 'assets/Marker@2x.png';
+            //  console.log(lat, long);
+            console.log(obj[i].name);
+            var marker = new google.maps.Marker({
+                position: {
+                    lat: lat,
+                    lng: long
+                },
+                animation: google.maps.Animation.DROP,
+                map: map,
+                title: obj[i].name,
+                icon: iconbase2
+            });
+            marker.metadata = {
+                type: "point",
+                id: obj[i].id
+            };
+            buildInfoWindow(marker, map, obj[i]);
+            markersArray.push(marker);
+            $$('.dd').append('<option value="' + obj[i].name +
+                '"/>'); //autocomplete
+        };
+
+        function buildInfoWindow(marker, map, locations) {
+                //trailNames.push(obj[i].name.toLowerCase());
+                var contentString = '<div id="content">' +
+                    '<div id="siteNotice">' + '</div>' +
+                    '<h2 id="firstHeading" class="firstHeading">' +
+                    obj[i].name + '</h2>' +
+                    '<div id="bodyContent">' + obj[i].desc +
+                    '</div>' + '<div id ="' + obj[i].avRating +
+                    '">' + '<div id="rating">' +
+                    '<p> The trail has <b>  ' + parseFloat(obj[i].avRating) +
+                    '</b> out of 5 star rating</p></div>' +
+                    '<a href="singleTrail.html" data-context-name="trails.' +
+                    (parseInt(obj[i].id) - 1) +
+                    '" onclick= "getimagesJSON(this.id)" id="' +
+                    obj[i].id + '">More Trail Information</a>' +
+                    '</div>';
+                var infowindow = new google.maps.InfoWindow({
+                    content: contentString,
+                    maxWidth: 200,
+                    opacity: 0.75,
+                });
+                google.maps.event.addListener(infowindow,
+                    'closeclick', function() {
+                        map.setZoom(10);
+                    });
+                google.maps.event.addListener(marker, 'click',
+                    function() { //when infowondow is opened
+                        infowindow.open(map, marker);
+                        console.log(marker);
+                        map.panTo(marker.getPosition());
+                    });
+                var searchbar = document.getElementById("searchbar");
+                searchbar.onkeyup = function() {
+                    for (var i = 0; i < obj.length; i++) {
+                        var x;
+                        if (searchbar.value.toLowerCase() ==
+                            obj[i].name.toLowerCase()) {
+                            console.log("true");
+                            x = obj[i].id - 1;
+                            console.log(x);
+                            //  map.panTo(.getPosition());
+                            map.setZoom(14);
+                            map.setCenter(markersArray[x].getPosition());
+                            return;
+                        }
+                    };
+                };
+            } //end
+        map.setOptions({
+            styles: styles
+        });
+    }
+    initialize();
+});
+myApp.onPageInit('profile', function(page) {
+    if (myApp.template7Data.profile.username === "" || sessionStorage.length <
+        0) {
+        //document.body.innerHTML = ("Log In");
+        $$(".user-card").remove();
+        $$(".yh").html(
+            "<div class='.col-100' style=' text-align: center'>Ready to create an account?<p><a href='signup.html' class='open-signup-screen close-login-screen'>Let's get started!</a></p></div> "
+        );
+    }
+    
+      var userId = $$(".pic").attr('id');
+    
+        console.log(userId);
+          getComments();
+       function getComments() {
+           $$.ajax({
+            url: "./model/server.php",
+            dataType: "json",
+            data: {
+                mode: 7,
+                id: userId
+            },
+            type: "POST",
+            dataType: "json",
+            success: function(total) {
+                var profile = myApp.template7Data
+                        .profile;
+                 console.log(total);
+                 profile.reviewsnum = total[0].total;
+                console.log(profile);
+                    $$('.badge').html(total[0].total);
+                } //end for succes function in ajax
+        }); //end for ajax in getimagesJSON
+    } //end of getcommentJSON
+});
+window.fbAsyncInit = function() {
+    FB.init({
+        appId: '1501994180128237',
+        xfbml: true,
+        version: 'v2.5'
+    });
+    //When button is clicked, we login to Facebook
+    $$('#fbLogin').on('click', function() {
+        FB.getLoginStatus(function(resp) {
+            console.log(resp);
             $$.ajax({
-                url: "./model/server.php",
+                url: "./model/facebook.php",
+                type: "post",
                 dataType: "json",
                 data: {
-                    mode: 7,
-                    id: a
+                    mode: 2,
+                    fbid: resp.authResponse.userID
                 },
-                type: "POST",
-                dataType: "json",
-                success: function(e) {
-                    var t = myApp.template7Data.profile;
-                    t.reviewsnum = e[0].total, $$(".badge").html(e[0].total)
+                success: function(resp2) {
+                    console.log(resp2);
+                    var profile = myApp.template7Data
+                        .profile;
+                    profile.username = resp2[0]
+                        .username;
+                    profile.profilePicture =
+                        resp2[0].profilePicture;
+                    
+                     profile.id=
+                        resp2[0].id;
+                    
+                    sessionStorage.username =
+                        resp2[0].username;
+                  
+                    $$("#response").html(
+                        "You're logged in with Facebook"
+                    );
+                    mainView.router.loadPage(
+                        'contacts.html');
+                    setTimeout(function() {
+                        myApp.closeModal(
+                            ".login-screen"
+                        );
+                        $$("#response")
+                            .html("");
+                    }, 1000);
+                    if (sessionStorage.length >
+                        0) { //add user's profile on nav bar
+                        //document.body.innerHTML = ("Log In");
+                        $$(".u-img").html(
+                            "<h3 style='color:#fff;'> &nbsp; Welcome, " +
+                        profile.username +
+                        "</h3><img class='circular'src=" +
+                        profile.profilePicture +
+                              " style='height:75px; width:75px; margin:auto; margin-top:-15px; margin-left: 20px;'/>"
+                        );
+                        $$(".sign-out").html(
+                            "<a href='allTrails.html' onclick='signOut()' class='sign-out item-link item-content panel-close' data-context-name='trails''><div class='item-inner'>Sign Out</div></a>"
+                        );
+                        //changes     
+                        $$(".proft").html(
+                            '<a href="projects.html" data-context-name="profile" class="item-link item-content"><img src="assets/Profile@2x.png" style="width: 52px;"></i></a>'
+                        );
+                        $$(".profy").html(
+                            '<a href="projects.html" data-context-name="profile" class="item-link item-content panel-close"><div class="item-inner">Profile</div></a>'
+                        );
+                    };
                 }
-            })
-        }("" === myApp.template7Data.profile.username || sessionStorage.length < 0) && ($$(".user-card").remove(), $$(".yh").html("<div class='.col-100' style=' text-align: center'>Ready to create an account?<p><a href='./partials/signup.html' class='open-signup-screen close-login-screen'>Let's get started!</a></p></div> "));
-        var a = $$(".pic").attr("id");
-        t()
-    }), window.fbAsyncInit = function() {
-        FB.init({
-            appId: "1501994180128237",
-            xfbml: !0,
-            version: "v2.5"
-        }), $$("#fbLogin").on("click", function() {
-            FB.getLoginStatus(function(e) {
-                $$.ajax({
-                    url: "./model/facebook.php",
-                    type: "post",
-                    dataType: "json",
-                    data: {
-                        mode: 2,
-                        fbid: e.authResponse.userID
-                    },
-                    success: function(e) {
-                        var t = myApp.template7Data.profile;
-                        t.username = e[0].username, t.profilePicture = e[0].profilePicture, t.id = e[0].id, sessionStorage.username = e[0].username, $$("#response").html("You're logged in with Facebook"), mainView.router.loadPage("./partials/contacts.html"), setTimeout(function() {
-                            myApp.closeModal(".login-screen"), $$("#response").html("")
-                        }, 1e3), sessionStorage.length > 0 && ($$(".u-img").html("<h3 style='color:#fff;'> &nbsp; Welcome, " + t.username + "</h3><img class='circular'src=" + t.profilePicture + " style='height:75px; width:75px; margin:auto; margin-top:-15px; margin-left: 20px;'/>"), $$(".sign-out").html("<a href='./partials/allTrails.html' onclick='signOut()' class='sign-out item-link item-content panel-close' data-context-name='trails''><div class='item-inner'>Sign Out</div></a>"), $$(".proft").html('<a href="./partials/projects.html" data-context-name="profile" class="item-link item-content"><img src="assets/Profile@2x.png" style="width: 52px;"></i></a>'), $$(".profy").html('<a href="./partials/projects.html" data-context-name="profile" class="item-link item-content panel-close"><div class="item-inner">Profile</div></a>'))
-                    }
-                })
-            }), FB.login(function(e) {
-                "connected" == e.status && FB.api("/me?fields=name,email,picture.type(large)", function(e) {
-                    var t = "default@email.com";
-                    if (null != e.email) var t = e.email;
-                    var a = e.name,
-                        i = e.picture.data.url,
-                        n = e.id;
-                    $$.ajax({
-                        url: "./model/facebook.php",
-                        type: "post",
-                        dataType: "json",
-                        data: {
-                            email: t,
-                            name: a,
-                            img: i,
-                            fbid: n,
-                            mode: 1
-                        },
-                        success: function(e) {
-                            var t = myApp.template7Data.profile;
-                            t.username = e[0].username, t.profilePicture = e[0].profilePicture, sessionStorage.username = e[0].username, $$("#response").html("You're logged in with Facebook"), mainView.router.loadPage("./partials/allTrails.html"), setTimeout(function() {
-                                myApp.closeModal(".login-screen"), $$("#response").html("")
-                            }, 3e3), sessionStorage.length > 0 && ($$(".u-img").html("<div class='item-inner' color='white'> HELLO " + t.username + "!</div><div class='item-inner'><img class='item-inner'  src=" + t.profilePicture + " height='200px' width='auto'/></div>"), $$(".sign-out").html("<a href='./partials/allTrails.html' onclick='signOut()' class='sign-out item-link item-content panel-close' data-context-name='trails''><div class='item-inner'>Sign Out</div></a>"), $$(".proft").html('<a href="./partials/projects.html" data-context-name="profile" class="item-link item-content"><img src="assets/Profile@2x.png" style="width: 52px;"></i></a>'), $$(".profy").html('<a href="./partials/projects.html" data-context-name="profile" class="item-link item-content panel-close"><div class="item-inner">Profile</div></a>'))
-                        }
-                    })
-                })
-            })
-        })
-    },
-    function(e, t, a) {
-        var i, n = e.getElementsByTagName(t)[0];
-        e.getElementById(a) || (i = e.createElement(t), i.id = a, i.src = "//connect.facebook.net/en_US/sdk.js", n.parentNode.insertBefore(i, n))
-    }(document, "script", "facebook-jssdk"), myApp.onPageInit("signup-screen", function(e) {
-        $$("#form").on("click", function(e) {
-            t()
-        });
-        var t = function() {
-            var e = document.forms["user-form"].fname.value;
-            if (null == e || "" == e) return $$("#rrresponse").html("Please Enter First Name"), !1;
-            var t = document.forms["user-form"].lname.value;
-            if (null == t || "" == t) return $$("#rrresponse").html("Please Enter Last Name"), !1;
-            var a = document.forms["user-form"].username.value;
-            if (null == a || "" == a) return $$("#rrresponse").html("Please Choose Username"), !1;
-            var i = document.forms["user-form"].password.value;
-            if (null == i || "" == i) return $$("#rrresponse").html("Please Choose Password with 6 to 20 Characters"), !1;
-            var n = document.forms["user-form"].email.value;
-            return null == n || "" == n ? ($$("#rrresponse").html("Please Enter Email"), !1) : void((null !== n || "" !== n && null !== e || "" !== e && null !== t || "" !== t && null !== a || "" !== a && null !== i || "" !== i) && ($$("#form").addClass("close-signup-screen"), $$("#form").addClass("open-login-screen"), newUser()))
-        }
-    }), myApp.onPageInit("trails", function(e) {
-        $$(".filter-open").on("click", function() {
-            $$(".fa-chevron-down").toggleClass("rotate"), $$(".filter").toggleClass("hidden")
-        }), $$('input[type="checkbox"]').on("keyup keydown change", function(e) {
-            var t = $$(".card").filter(function(e, t) {
-                return $$(this).hasClass("0")
             });
-            $$("#dogF").is(":checked") ? $$(t).hide() : $$(t).show()
         });
-        var t = myApp.picker({
-            input: "#picker-custom-toolbar",
-            rotateEffect: !0,
-            toolbarTemplate: '<div class="toolbar"><div class="toolbar-inner"><div class="left"></div><div class="right"><a href="#" class="link done close-picker">Search</a></div></div></div>',
-            cols: [{
-                textAlign: "left",
-                values: ["Easy", "Intermediate", "Difficult"]
-            }],
-            onChange: function(e) {
-                e.container.find(".done").on("click", function() {
-                    var e = t.displayValue[0],
-                        a = $$(".card").filter(function(t, a) {
-                            return $$(this).hasClass(e)
+        FB.login(function(resp) {
+            if (resp.status == "connected") {
+                // If we are connected to Facebook
+                FB.api("/me?fields=name,email,picture.type(large)",
+                    function(resp2) {
+                        var email = "default@email.com"
+                            //make sure the email exists
+                        if (resp2.email != null) {
+                            var email = resp2.email;
+                        }
+                        var name = resp2.name;
+                        var img = resp2.picture.data.url;
+                        var fbid = resp2.id;
+                        //ajax all the information into the server
+                        $$.ajax({
+                            url: "facebook.php",
+                            type: "post",
+                            dataType: "json",
+                            data: {
+                                email: email,
+                                name: name,
+                                img: img,
+                                fbid: fbid,
+                                mode: 1
+                            },
+                            success: function(
+                                resp) {
+                                var profile =
+                                    myApp.template7Data
+                                    .profile;
+                                profile.username =
+                                    resp[0]
+                                    .username;
+                                profile.profilePicture =
+                                    resp[0]
+                                    .profilePicture;
+                                sessionStorage
+                                    .username =
+                                    resp[0]
+                                    .username;
+                                console.log(
+                                    sessionStorage
+                                    .username
+                                );
+                                $$(
+                                    "#response"
+                                ).html(
+                                    "You're logged in with Facebook"
+                                );
+                                mainView.router
+                                    .loadPage(
+                                        'allTrails.html'
+                                    );
+                                setTimeout(
+                                    function() {
+                                        myApp
+                                            .closeModal(
+                                                ".login-screen"
+                                            );
+                                        $$
+                                            (
+                                                "#response"
+                                            )
+                                            .html(
+                                                ""
+                                            );
+                                    },
+                                    3000
+                                );
+                                if (
+                                    sessionStorage
+                                    .length >
+                                    0) { //add user's profile on nav bar
+                                    //document.body.innerHTML = ("Log In");
+                                    $$(
+                                        ".u-img"
+                                    ).html(
+                                        "<div class='item-inner' color='white'> HELLO " +
+                                        profile
+                                        .username +
+                                        "!</div><div class='item-inner'><img class='item-inner'  src=" +
+                                        profile
+                                        .profilePicture +
+                                        " height='200px' width='auto'/></div>"
+                                    );
+                                    $$(
+                                        ".sign-out"
+                                    ).html(
+                                        "<a href='allTrails.html' onclick='signOut()' class='sign-out item-link item-content panel-close' data-context-name='trails''><div class='item-inner'>Sign Out</div></a>"
+                                    );
+                                    //changes     
+                                    $$(
+                                        ".proft"
+                                    ).html(
+                                        '<a href="projects.html" data-context-name="profile" class="item-link item-content"><img src="assets/Profile@2x.png" style="width: 52px;"></i></a>'
+                                    );
+                                    $$(
+                                        ".profy"
+                                    ).html(
+                                        '<a href="projects.html" data-context-name="profile" class="item-link item-content panel-close"><div class="item-inner">Profile</div></a>'
+                                    );
+                                };
+                            }
                         });
-                    if (a && ($$(".card").hide(), $$(a).show()), $$("#dogF").is(":checked")) {
-                        var i = $$(".card").filter(function(e, t) {
-                            return $$(this).hasClass("0")
-                        });
-                        $$(i).hide()
-                    } else $$(i).show()
-                })
+                    });
             }
-        })
+        });
     });
+};
+
+
+
+(function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) {
+        return;
+    }
+    js = d.createElement(s);
+    js.id = id;
+    js.src = "//connect.facebook.net/en_US/sdk.js";
+    fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));
+
+myApp.onPageInit('signup-screen', function(page) { 
+$$('#form').on('click', function (e) {
+    validateUser();
+});
+var validateUser = function(){
+    
+     var fname = document.forms["user-form"]["fname"].value;
+    if (fname == null || fname == "") {
+        $$("#rrresponse").html(
+                    "Please Enter First Name"
+                );
+        return false;
+    }
+    var lname = document.forms["user-form"]["lname"].value;
+    if (lname == null || lname == "") {
+        $$("#rrresponse").html(
+                    "Please Enter Last Name"
+                );
+        return false;
+    }
+    
+    var username = document.forms["user-form"]["username"].value;
+    if (username == null || username == "") {
+        $$("#rrresponse").html(
+                    "Please Choose Username"
+                );
+        return false;
+    }
+    
+    
+    var pass = document.forms["user-form"]["password"].value;
+    if (pass == null || pass == "") {
+        $$("#rrresponse").html(
+                    "Please Choose Password with 6 to 20 Characters"
+                );
+        return false;
+    }
+    
+    var email = document.forms["user-form"]["email"].value;
+    if (email == null || email == "") {
+        $$("#rrresponse").html(
+                    "Please Enter Email"
+                );
+        return false;
+    }
+      if (email !== null || email !== "" && fname !== null || fname !== "" && lname !== null || lname !== "" && username !== null || username !== "" && pass !== null || pass !== ""){
+      
+      
+    	$$('#form').addClass('close-signup-screen');
+    	$$('#form').addClass('open-login-screen');
+    	newUser();
+    	
+    	
+    }
+      
+      };
+    
+
+  
+});
+
+myApp.onPageInit('trails', function(page) 
+          {
+    
+    
+
+
+$$(".filter-open").on('click', function (){
+    
+    $$('.fa-chevron-down').toggleClass("rotate");
+  
+    $$(".filter").toggleClass("hidden");
+
+});
+
+    
+    
+$$('input[type="checkbox"]').on('keyup keydown change', function (e) {  
+         var notFriendly = $$('.card').filter(function(index, el) {
+        return $$(this).hasClass('0');
+            
+           
+});  
+    if($$('#dogF').is(":checked")){  
+   
+  
+        
+       $$(notFriendly).hide();
+        
+   
+
+    }else{
+        $$(notFriendly).show();
+    
+    }
+ 
+     });
+    
+   //distance
+ 
+                         
+    
+    var pickerCustomToolbar = myApp.picker({
+    input: '#picker-custom-toolbar',
+    rotateEffect: true,
+    toolbarTemplate: 
+        '<div class="toolbar">' +
+            '<div class="toolbar-inner">' +
+                '<div class="left">' +
+                   
+                '</div>' +
+                '<div class="right">' +
+                    '<a href="#" class="link done close-picker">Search</a>' +
+                '</div>' +
+            '</div>' +
+        '</div>',
+    cols: [
+      
+   
+        {   textAlign: 'left',
+            values: ['Easy', 'Intermediate', 'Difficult']
+        }
+    ],
+    onChange: function (picker) {
+        
+        picker.container.find('.done').on('click', function () {
+            console.log(pickerCustomToolbar.displayValue);
+           
+            var difficulty = pickerCustomToolbar.displayValue[0];
+         
+            console.log(difficulty);
+                      
+            var customDifficulty =  
+            $$('.card').filter(function(index, el) {
+        return $$(this).hasClass(difficulty);
+               
+}); 
+             console.log(customDifficulty);
+  
+            if(customDifficulty){
+                    $$(".card").hide();
+                    $$(customDifficulty).show();
+            }
+       
+    if($$('#dogF').is(":checked")){  
+   
+  var notFriendly = $$('.card').filter(function(index, el) {
+        return $$(this).hasClass('0');
+            
+           
+});  
+        
+       $$(notFriendly).hide();
+        
+   
+
+    }else{
+        $$(notFriendly).show();
+    
+    }
+            
+            
+    });
+        
+
+        
+    
+    }
+});
+    
+    
+
+});
